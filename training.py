@@ -89,7 +89,71 @@ model = keras.Model(inputs, outputs) #link both to get new model
 model.compile(
     optimizer=keras.optimizers.Adam(learning_rate=1e-3), #weighting
     loss="binary_crossentropy", #calculate if far from right
-    metrics=["accuracy", keras.metrics.AUC(name="auc"), keras.metrics.F1Score(name="f1_score")],
+    metrics=["accuracy", keras.metrics.AUC(name="auc"), keras.metrics.F1Score(threshold=0.5, name="f1_score")],
 )
 model.summary()
 
+callbacks = [
+    #stop if not getting better
+    keras.callbacks.EarlyStopping(
+        monitor="val_loss",
+        patience=2,
+        restore_best_weights=True,
+        verbose=1
+    ),
+    #save only the best one
+    keras.callbacks.ModelCheckpoint(
+        filepath="best_model_ckp.keras",
+        monitor="val_loss",
+        save_best_only=True,
+        verbose=1
+    )
+]
+
+#train the model step 1
+print("start training")
+model_step1 = model.fit(
+    train_ds,
+    batch_size=None,
+    epochs=EPOCHS,
+    callbacks=callbacks,
+    validation_data=val_ds,
+    class_weight=class_weight,
+)
+
+#train the model step 2 
+base_model.trainable = True #for fine tune now
+
+#compile again but with lower rate to not change too easly
+model.compile(
+    optimizer=keras.optimizers.Adam(learning_rate=1e-5),
+    loss="binary_crossentropy",
+    metrics=["accuracy", keras.metrics.AUC(name="auc"), keras.metrics.F1Score(threshold=0.5, name="f1_score")]
+)
+
+#same with callbacks (more patience)
+callbacks_fine = [
+    keras.callbacks.EarlyStopping(
+        monitor="val_loss",
+        patience=5,
+        restore_best_weights=True,
+        verbose=1
+    ),
+    keras.callbacks.ModelCheckpoint(
+        filepath="best_model_final.keras",
+        monitor="val_loss",
+        save_best_only=True,
+        verbose=1
+    )
+]
+
+print("start fine tune")
+history_phase2 = model.fit(
+    train_ds,
+    validation_data=val_ds,
+    epochs=10, #lower to dodge overfitting
+    class_weight=class_weight,
+    callbacks=callbacks_fine
+)
+
+print("\n Training finished, best model in: 'best_model_final.keras'.")
