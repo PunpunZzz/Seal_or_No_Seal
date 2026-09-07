@@ -60,6 +60,7 @@ print(f"Weight: {class_weight}")
 train_ds = train_ds.cache().shuffle(1000).prefetch(buffer_size=AUTOTUNE) #random order
 val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
 
+'''
 #for training we randomize some para
 data_augmentation = keras.Sequential([
     layers.RandomFlip("horizontal"),
@@ -120,9 +121,13 @@ model_step1 = model.fit(
     validation_data=val_ds,
     class_weight=class_weight,
 )
+'''
+
+print("Get ckp")
+model = keras.models.load_model("best_model_ckp.keras")
 
 #train the model step 2 
-base_model.trainable = True #for fine tune now
+model.trainable = True #for fine tune now
 
 #compile again but with lower rate to not change too easly
 model.compile(
