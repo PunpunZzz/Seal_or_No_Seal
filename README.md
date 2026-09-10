@@ -58,6 +58,21 @@ ChessWebGame/
    ```bash
    In this game of Seal or No Seal, today's winner is....[answer]!!!
    ```
+<br>
+<div align="center">
+  <table border="0" cellspacing="0" cellpadding="0">
+    <tr>
+      <td align="center" style="border: none; padding: 0;">
+        <img src="https://github.com/user-attachments/assets/f1d9df65-71af-438a-bed7-719384a8392f" alt="Seal" width="300" style="display: block;"><br>
+        <b>Seal</b>
+      </td>
+      <td align="center" style="border: none; padding: 0;">
+        <img src="https://github.com/user-attachments/assets/3863e028-0f40-4255-aa0b-cdc2a232dd72" alt="No Seal" width="300" style="display: block;"><br>
+        <b>No Seal</b>
+      </td>
+    </tr>
+  </table>
+</div>
 
 ## Limitations
 
